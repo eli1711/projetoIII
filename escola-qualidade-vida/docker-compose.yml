@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-1
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: escola_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db_data:/var/lib/mysql
+    networks:
+      - rede-interna
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: escola-backend
+    restart: always
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: escola_db
+      DB_USER: root
+      DB_PASSWORD: password
+      SECRET_KEY: uma_chave_super_secreta_32_caracteres_no_minimo
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+    networks:
+      - rede-interna
+
+  nginx:
+    build:
+      context: ./frontend  # Certifique-se de que o diretório do frontend está correto
+      dockerfile: Dockerfile  # Dockerfile do Nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/public:/usr/share/nginx/html  # Serve os arquivos estáticos do frontend
+    networks:
+      - rede-interna
+
+networks:
+  rede-interna:
+    driver: bridge
