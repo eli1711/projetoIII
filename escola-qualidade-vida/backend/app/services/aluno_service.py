@@ -1,8 +1,28 @@
 from app.models.aluno import Aluno
-from app.utils.database import get_db_session
+from app import db
 
 def listar_alunos():
-    session = get_db_session()
-    alunos = session.query(Aluno).all()
-    session.close()
-    return [{"id": a.id_aluno, "nome": a.nome} for a in alunos]
+    alunos = Aluno.query.all()
+    return [{"id": a.id, "nome": a.nome} for a in alunos]
+
+def cadastrar_aluno(data):
+    aluno = aluno(
+        nome=data['nome'],
+        sobrenome=data['sobrenome'],
+        cidade=data['cidade'],
+        bairro=data['bairro'],
+        rua=data['rua'],
+        idade=data['idade'],
+        empregado=data['empregado'],
+        empresa=data.get('empresa'),
+        comorbidade=data.get('comorbidade'),
+        nome_responsavel=data.get('nomeResponsavel'),
+        sobrenome_responsavel=data.get('sobrenomeResponsavel'),
+        parentesco_responsavel=data.get('parentescoResponsavel'),
+        telefone_responsavel=data.get('telefoneResponsavel')
+    )
+
+    # Salvar no banco de dados
+    db.session.add(aluno)
+    db.session.commit()
+    return aluno

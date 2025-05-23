@@ -1,26 +1,33 @@
-from sqlalchemy import Column, Integer, String, Enum, ForeignKey
-from sqlalchemy.orm import relationship
-from enum import Enum as PyEnum
-from app.utils.database import Base
+from app import db
 
-class Periodo(PyEnum):
-    MANHA = "manhã"
-    TARDE = "tarde"
-    NOITE = "noite"
+class Aluno(db.Model):
+    __tablename__ = 'aluno'
 
-class Aluno(Base):
-    __tablename__ = "aluno"
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(255), nullable=False)
+    sobrenome = db.Column(db.String(255), nullable=False)
+    cidade = db.Column(db.String(255), nullable=False)
+    bairro = db.Column(db.String(255), nullable=False)
+    rua = db.Column(db.String(255), nullable=False)
+    idade = db.Column(db.Integer, nullable=False)
+    empregado = db.Column(db.String(10), nullable=False)  # Alterado Enum → String
+    mora_com_quem = db.Column(db.String(255))
+    sobre_aluno = db.Column(db.Text)
+    foto = db.Column(db.String(255))
 
-    id_aluno = Column(Integer, primary_key=True, index=True)
-    nome = Column(String(100), nullable=False)
-    turma_id = Column(Integer, ForeignKey("turma.id_turma"))
-    curso_id = Column(Integer, ForeignKey("curso.id_curso"))
-    periodo = Column(Enum(Periodo), nullable=False)
-    imagem = Column(String(255))
-    nome_responsavel = Column(String(100), nullable=False)
-    telefone_responsavel = Column(String(20))
-    celular_responsavel = Column(String(20), nullable=False)
+    responsavel_id = db.Column(db.Integer, db.ForeignKey('responsavel.id'))
+    empresa_id = db.Column(db.Integer, db.ForeignKey('empresa.id'))
 
-    turma = relationship("Turma", back_populates="alunos")
-    curso = relationship("Curso", back_populates="alunos")
-    ocorrencias = relationship("Ocorrencia", back_populates="aluno")
+    def __init__(self, nome, sobrenome, cidade, bairro, rua, idade, empregado, mora_com_quem, sobre_aluno, foto, responsavel_id, empresa_id):
+        self.nome = nome
+        self.sobrenome = sobrenome
+        self.cidade = cidade
+        self.bairro = bairro
+        self.rua = rua
+        self.idade = idade
+        self.empregado = empregado
+        self.mora_com_quem = mora_com_quem
+        self.sobre_aluno = sobre_aluno
+        self.foto = foto
+        self.responsavel_id = responsavel_id
+        self.empresa_id = empresa_id

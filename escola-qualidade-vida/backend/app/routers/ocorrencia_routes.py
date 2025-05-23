@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify
-from app.services.ocorrencia_service import listar_ocorrencias
+from flask import Blueprint
 
-ocorrencia_bp = Blueprint("ocorrencias", __name__, url_prefix="/ocorrencias")
+# Definindo o Blueprint para as ocorrências
+ocorrencia_bp = Blueprint('ocorrencias', __name__)
 
-@ocorrencia_bp.route("/", methods=["GET"])
-def listar():
-    ocorrencias = listar_ocorrencias()
-    return jsonify([o.to_dict() for o in ocorrencias])
+@ocorrencia_bp.route('/listar', methods=['GET'])
+def listar_ocorrencias():
+    # Lógica para listar as ocorrências
+    return "Lista de ocorrências"

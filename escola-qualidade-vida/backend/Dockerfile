@@ -1,16 +1,25 @@
 FROM python:3.11-slim
 
-# Definir o diretório de trabalho
+# Dependências do sistema
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Define o diretório correto do projeto
 WORKDIR /app
 
-# Copiar os arquivos do backend para o contêiner
-COPY ./app /app
+# Copia tudo que está em backend/
+COPY . /app
 
-# Instalar as dependências do projeto
+# Adiciona o caminho ao PYTHONPATH
+ENV PYTHONPATH=/app:$PYTHONPATH
+
+# Instala as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expor a porta em que o Flask estará rodando
+# Expõe a porta do Flask
 EXPOSE 5000
 
-# Iniciar o Flask
+# Inicia a aplicação
 CMD ["python", "main.py"]
